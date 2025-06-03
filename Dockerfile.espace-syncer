@@ -1,0 +1,27 @@
+FROM node:16-slim
+
+WORKDIR /app
+
+# Copy package files
+COPY contract/package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy the entire contract directory
+COPY contract/ ./
+
+# Copy the .env file
+COPY contract/.env ./
+
+# Install curl for connectivity check
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
+# Copy the startup script
+COPY start.sh /app/start.sh
+RUN chmod +x /app/start.sh
+
+# Set environment variable for debugging
+ENV DEBUG=espacePoolStatusSyncer
+
+CMD ["/app/start.sh"] 
